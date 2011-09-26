@@ -4,6 +4,9 @@
   top: 0;
 }
 
+.post img { 
+  display: block !important;
+}
 
 .posts {
 }
