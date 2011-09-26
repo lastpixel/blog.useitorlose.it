@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - How to unit test a Java class with static initializers</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>How to unit test a Java class with static initializers</h1>
+  <div class="date">July 13, 2008</div>
+  <div class="body">
+  <p>
+  We have a large Java codebase that we're trying to put under test. Since this class was not designed for testability we often run into code that cannot be tested as is. Most often this involves code that assumes it will always be run inside our J2EE Application Server because it depends on classes provided by the server.<br>
+  <br>
+  I was recently working with someone on this Java class<br>
+</p>
+<blockquote style="font-family: courier new;">
+  class Person {<br>
+  static {<br>
+  Logger logger = new ContainerLogger();<br>
+  }<br>
+  <br>
+  public String doSomething() {<br>
+  ...<br>
+  logger.info("I did something");<br>
+  ...<br>
+  }<br>
+  }<br>
+</blockquote>
+<p>
+  We couldn't create a unit test for the doSomething method because the ContainerLogger class was provided by our application server and couldn't be used outside the container. We refactored to come up with this solution.<br>
+</p>
+<blockquote style="font-family: courier new;">
+  class MyClass {<br>
+  public static Logger _logger;<br>
+  public Logger logger() {<br>
+  if (_logger == null) {<br>
+  logger = new ContainerLogger();<br>
+  }<br>
+  return _logger;<br>
+  }<br>
+  <br>
+  public String doSomething() {<br>
+  ...<br>
+  logger().info("I did something");<br>
+  ...<br>
+  }<br>
+  }<br>
+</blockquote>
+<p>
+  We refactored our code to access the logger using the accessor method <span style="font-family:courier new;">logger()</span> then we also made the logger variable itself public at the same time. Why did we do those two seemingly contradictory things? The accessor method implements the singleton pattern preserving the semantics of the static initializer and the public access to the instance variable <span style="font-family:courier new;">_logger</span> allows us to replace the implementation with a mock in our test.<br>
+</p>
+<blockquote style="font-family: courier new;">
+  public class TestMyClass extends TestCase {<br>
+  public void testSomething() {<br>
+  MyClass._logger = new MockLogger();<br>
+  assert(MyClass.doSomething(), "expected return");<br>
+  }<br>
+  }
+</blockquote>
+<p>
+  I've seen too much legacy Java code that assumes it will always run inside a container but with testing we need to change our mindsets because when running a test we will be outside the container. All dependencies on the container (and in most applications I've seen we don't need that many!) should be encapsulated and able to be mocked through dependency injection. If you do this you'll end up with simpler code that better follows the <a href="http://www.objectmentor.com/resources/articles/srp.pdf">Single Responsibility Principle</a>
+</p>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Use it or Lose it Blog - What to do when ActiveRecord thinks an Oracle key is a decimal</title>
+   <meta name="author" content="Stuart Robinson" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/uioli">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+  <div id="site">
+    <div id="header">
+      <h1>The Blog @ Use it or Lose it</h1>
+      <div id="menu">
+        <a href="/index.html" id="blog_link">Blog Articles</a>
+        <a href="/open_source.html" id="github_link">Open Source</a>
+        <a href="/about_me.html" id="about_me">About Me</a>
+      </div>
+    </div>
+    <div class="clearfix"/>
+  
+    <div id="content">
+      <div class="post">
+  <h1>What to do when ActiveRecord thinks an Oracle key is a decimal</h1>
+  <div class="date">January 27, 2010</div>
+  <div class="body">
+  <p>
+  I recently created a model for an existing database table using the <a href="http://www.alexrothenberg.com/2009/11/generate-models-from-tables-legacy-data.html">legacy_data gem</a> and was confused when my primary key showed up in scientific notation. It turned out the issue was due to sloppiness in the table definition and could be easily fixed once I understood what ActiveRecord was doing.<br>
+  <br>
+  I created a <code>Person</code> model connected to the <code>people</code> table<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  but when I went into script/console the primary key showed up as a <code>BigDecimal</code> when I expected an <code>integer</code>.<br>
+  <br>
+</p>
+
+<pre class="old_code">
+$ script/console 
+Loading development environment (Rails 2.3.4)
+>> Person.first.id
+=> #<BigDecimal:37378fc,'0.1002484442 5E11',12(16)>
+</pre>
+
+<p>
+  <br>
+  <br>
+  This wasn't what I wanted and would cause problems in my app when it tried to build a url with that id like <code>http://localhost:3000/people/10024844425.0</code>. The rails routing engine would see the .0, treat it as a format (like .xml or .json) and get confused. Let's look at why this is happening.<br>
+  <br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  We see that ActiveRecord is treating this column as a <code>:decimal</code> because it's sql_type is <code>NUMBER</code>. It turns out this is correct because an Oracle number is a decimal unless you specify it to have 0 digits after the decimal point (scale of 0). Here's the <a href="http://download.oracle.com/docs/cd/B19306_01/server.102/b14220/datatype.htm#i16209">documentation from Oracle</a> (the last sentence is my bold)
+</p>
+
+<pre class="old_code">
+NUMBER Datatype
+
+The NUMBER datatype stores fixed and floating-point numbers. Numbers of virtually any magnitude can be stored and are
+guaranteed portable among different systems operating Oracle, up to 38 digits of precision.
+
+The following numbers can be stored in a NUMBER column:
+  * Positive numbers in the range 1 x 10-130 to 9.99...9 x 10125 with up to 38 significant digits
+  * Negative numbers from -1 x 10-130 to 9.99...99 x 10125 with up to 38 significant digits
+  * Zero
+  * Positive and negative infinity (generated only by importing from an Oracle Version 5 database)
+
+For numeric columns, you can specify the column as:
+  column_name NUMBER 
+
+Optionally, you can also specify a precision (total number of digits) and scale (number of digits to the right of the decimal point):
+  column_name NUMBER (precision, scale) 
+
+If a precision is not specified, the column stores values as given. If no scale is specified, the scale is zero.
+
+Oracle guarantees portability of numbers with a precision equal to or less than 38 digits. You can specify a scale and no precision:
+  column_name NUMBER (*, scale) 
+
+In this case, the precision is 38, and the specified scale is maintained.
+
+<b>When you specify numeric fields, it is a good idea to specify the precision and scale. This provides extra integrity checking on input.</b>
+</pre>
+
+<p>
+  <br>
+  <br>
+  Let's look in my database and sure enough the ID is a number<br>
+  <br>
+</p>
+<pre class="old_code">
+$ sqlplus myusername/mypassword@localhost:1521/mydatabase.world
+SQL*Plus: Release 10.2.0.4.0 - Production on Wed Jan 27 09:15:09 2010
+Copyright (c) 1982, 2007, Oracle.  All Rights Reserved.
+
+Connected to:
+Oracle Database 10g Release 10.2.0.4.0 - Production
+SQL> desc people;
+Name        Null?    Type
+----------------------------------------- -------- ----------------------------
+ID                   NUMBER
+NAME                 VARCHAR2(10)
+</pre>
+
+<p>
+  <br>
+  <br>
+  If you are allowed to change your database you can create a migration like<br>
+  <br>
+</p>
+<pre class="old_code">
+<br>$ script/generate migration change_person_id_to_integer<br>STUBBING MckinseyLDAP<br>      exists  db/migrate<br>      create  db/migrate/20100127145747_change_person_id_to_integer.rb<br>
+</pre>
+<p>
+  <br>
+  <br>
+  now edit the migration<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  In my case there were other applications using this table and I was not allowed to change it so I implemented a fix in Ruby to tell my model to treat this column as an integer even though it was defined as a decimal in the database.<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  We defined a method <code>set_integer_columns</code> that will force ActiveRecord to treat the columns we specify as integers. In our Person model we declare <code>:id</code> is an integer column. Let's test it out!<br>
+  <br>
+</p>
+<pre class="old_code">
+$ script/console 
+Loading development environment (Rails 2.3.4)
+>> Person.first.id
+=> 10024844425
+>> Person.columns_hash['id'].type
+=> :integer
+</pre>
+
+<p>
+  <br>
+  <br>
+  Just as expected id is now an integer and we can go ahead building the rest of our application.<br>
+  <br>
+  This is not an issue with all Oracle tables as if the column was defined as <code>NUMBER(10)</code> (with a precision and implicit scale of 0) then ActiveRecord will interpret it as an integer automatically based on the parentheses in the data type - i.e NUMBER(10) <a href="http://github.com/rails/rails/blob/master/activerecord/lib/active_record/connection_adapters/abstract/schema_definitions.rb#L224-238">ActiveRecord</a> or <a href="http://github.com/rsim/oracle-enhanced/blob/master/lib/active_record/connection_adapters/oracle_enhanced_adapter.rb#L192-197">Oracle Enhanced</a>).
+</p>
+<div class="blogger-post-footer">
+  <img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/86313661235162475-5327631245171651344?l=www.alexrothenberg.com' alt=''>
+</div>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+    </div>
+
+    <div id='footer'>
+      &copy; 2011 lastpixel
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - Some things are inherently complicated and slow ... put them in the right place</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>Some things are inherently complicated and slow ... put them in the right place</h1>
+  <div class="date">July 04, 2008</div>
+  <div class="body">
+  <p>
+  One of the first lessons I learned when I started working as a software developer professionally was that you don't always have to make an action fast, sometimes its just enough to make it <span style="font-style: italic;">seem</span> fast to a user. This lesson was learned in the 1990s in the context of a Windows application. What we did was quickly draw part of the screen (or a splash image) immediately then do the time consuming work in the background so that by the time the user was ready to interact with the application we'd be ready for them.<br>
+  <br>
+  Recently I was reminded of this lesson on a website I'm working on. We have a complicated report to show on the user's homepage. My first implementation involved generating the report in real-time when the page is loaded but this was very slooooow. Some profiling and analysis let us make it somewhat faster but not fast enough.<br>
+  <br>
+  I was stumped until I remembered my old lesson. If it wasn't possible to generate the report quickly, perhaps we could do it sometime when the user wouldn't mind.<br>
+  <br>
+  Luckily this is a Rails application and ActiveRecord Callbacks make it easy to do this. I could pregenerate the report and update a portion of it each time something is saved. Users expect a save to take some time and don't do it that often. Then generating the homepage becomes just a simple matter of displaying the existing rows.<br>
+  <br>
+  First I setup my models to call into the report generator every time they change<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  Then I implement the complicated (and slow) logic to pre-compute the rows in the report in a library class<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  Finally I can show the report on the homepage with some boring (and fast) Rails code<br>
+  <br>
+  Model:<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  Controller:<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  and the View:<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l erb -O encoding=utf-8 -f html
+<p>
+  <br>
+  <br>
+  The interesting insight for me is that when optimizing there are sometimes hard problems that can't be solved. Its important not to lose sight of the goal you're aiming at (a satisfying user experience) and that sometimes involves spending the computational time somewhere where the user won't mind.
+</p>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>

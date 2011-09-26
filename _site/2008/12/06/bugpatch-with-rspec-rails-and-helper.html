@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - Bug/patch with rspec-rails and helper instance variables</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>Bug/patch with rspec-rails and helper instance variables</h1>
+  <div class="date">December 06, 2008</div>
+  <div class="body">
+  <p>
+  I finally got around to upgrading my version of rspec-rails from one that's almost a year old and came across an issue with the way <a href="http://blog.davidchelimsky.net/2008/5/29/rspec-waving-bye-bye-to-implicit-module-inclusion">implicit module inclusion</a> is handled.<br>
+  <br>
+  If you have a handler that uses memoization to cache some information in instance variables such as this (I'm not sure if this is a smell but my project has some examples of it)<br>
+  <br>
+</p>
+<pre class="old_code">
+<br>module UsersHelper<br> def all_users<br>   @users ||= User.find(:all)<br> end<br>end<br>
+</pre>
+<p>
+  <br>
+  <br>
+  You would expect this spec to work<br>
+</p>
+<pre class="old_code">
+<br>describe UsersHelper do<br> it "should find all users" do<br>   User.expects(:find).with(:all).returns(result=mock)<br>   helper.all_users.should == result<br> end<br>end<br>
+</pre>
+<p>
+  <br>
+  <br>
+  Sometimes it does but if any other spec has called <span style="font-family: courier new;">helper.all_users</span> previously it will fail as the memoized <span style="font-family: courier new;">@users</span> variable is not nil so the collection is reused.<br>
+  <br>
+  I have submitted a <a href="http://rspec.lighthouseapp.com/projects/5645-rspec/tickets/627-rspec-rails-specs-resusing-helper-so-instance-variables-are-side-effects">lighthouse patch to rspec-rails</a> that fixes the problem so hopefully they will agree to fix it soon. Until then patch is available on github in <a href="http://github.com/alexrothenberg/rspec-rails/commit/2d38cb9e2a8e2eb407e07e5494382ac2f263aef4">my fork or rspec-rails</a> if you want to use it.
+</p>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>

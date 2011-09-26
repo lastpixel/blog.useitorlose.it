@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - Undefining a constant in a rspec test</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>Undefining a constant in a rspec test</h1>
+  <div class="date">October 08, 2008</div>
+  <div class="body">
+  <p>
+  I want to share something I just figured out. I had to write some code that used a class from a plugin if it was there and but did not require the plugin. The problem I faced was how to test this.<br>
+  <br>
+  My method looked like this<br>
+</p>
+<pre class="old_code">
+class User <br> def lookup_additional_person_info<br>   if defined? CommonServices::Person<br>     person = CommonServices::Person.find_by_id(@person_id)<br>     @address = person.address<br>   else<br>     @address = 'not available'<br>   end<br> end<br>end<br><br>
+</pre>
+<p>
+  I knew how to define CommonServices::Person to test the positive case but what about the negative? I found out you can undefine a class by sending its parent <span style="font-family: courier new;">:remove_constant</span><br>
+  <br>
+</p>
+<pre class="old_code">
+  it 'should default additional parameters if CommonServices::Person is not defined' do<br>   defined?(CommonServices::Person).should be_nil<br>   user = User.new(:person_id=123)<br>   user.lookup_additional_person_info<br>   user.address.should == 'not available'<br> end<br><br> it 'should not populate additional parameters if CommonServices::Person is not defined' do<br>   begin<br>     defined?(CommonServices::Person).should be_nil<br>     module CommonServices<br>       class Person<br>       end<br>     end<br>     CommonServices::Person.expects(:find).with(123).returns(person=mock)<br>     person.expects(:address).returns(address_from_service=mock)<br>  <br>     user = User.new(:person_id=123)<br>     user.lookup_additional_person_info<br>     user.address.should == address_from_service<br>   ensure<br>     CommonServices.send(:remove_const, :Person)<br>   end<br> end<br>
+</pre>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>

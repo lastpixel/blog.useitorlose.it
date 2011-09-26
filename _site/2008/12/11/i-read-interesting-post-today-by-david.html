@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - How I use TDD for  Integration and Isolation testing</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>How I use TDD for  Integration and Isolation testing</h1>
+  <div class="date">December 11, 2008</div>
+  <div class="body">
+  <p>
+  I read an interesting post today by David Chelimsky who wrote RSpec <a href="http://blog.davidchelimsky.net/2008/12/11/a-case-against-a-case-against-mocking-and-stubbing">A case against a case against mocking and stubbing</a>. Its about mocking in testing and isolated vs integrated tests. I liked it all but what I particularly liked is how it describes the process of <a href="http://kinderman.net/articles/2007/11/18/testing-on-high-bottom-up-versus-top-down-test-driven-development">outside-in development</a>.<br>
+  <br>
+  To quote:<br>
+  <br>
+</p>
+<ol>
+  <li style="list-style: none">
+    <br>
+  </li>
+  <li>Write scenarios in plain text with cucumber (driven by user stories, organized in features).
+  </li>
+  <li style="list-style: none">
+    <br>
+  </li>
+  <li>Write the code for a step (or part of a step), run the feature, and observe the failure.
+  </li>
+  <li style="list-style: none">
+    <br>
+  </li>
+  <li>Optionally (yes, it depends – and why is the topic for another blog) drive out a view with a view spec. When I say “drive out,” I mean a very granular Red/Green/Refactor cycle that only involves this view, and only enough of this view to support satisfaction of the failing step in the cucumber feature.
+  </li>
+  <li style="list-style: none">
+    <br>
+  </li>
+  <li>Drive out a controller action using the same, granular Red/Green/Refactor cycle. And it may not be the entire controller action I think I want, covering all the cases I think I want. Just enough to support satisfaction of the failing step.
+  </li>
+  <li style="list-style: none">
+    <br>
+  </li>
+  <li>Drive out the parts of the model that I need to satisfy the failing step, using the same granular R/G/R process.
+  </li>
+  <li style="list-style: none">
+    <br>
+  </li>
+  <li>Run the cucumber feature and assess where I am.
+  </li>
+  <li style="list-style: none">
+    <br>
+  </li>
+</ol>
+<p>
+  <br>
+  <br>
+  In my projects I think I'm pretty good at following 3,4 &amp;5 but I've struggled with steps 1 &amp; 6. With the advent of <a href="http://github.com/aslakhellesoy/cucumber/wikis">cucumber</a> I think now is the time to work on those other steps. I'll let you know how it goes in the New Year.
+</p>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>

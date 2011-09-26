@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Use it or Lose it Blog - Purging old cruise builds</title>
+   <meta name="author" content="Stuart Robinson" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/uioli">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+  <div id="site">
+    <div id="header">
+      <h1>The Blog @ Use it or Lose it</h1>
+      <div id="menu">
+        <a href="/index.html" id="blog_link">Blog Articles</a>
+        <a href="/open_source.html" id="github_link">Open Source</a>
+        <a href="/about_me.html" id="about_me">About Me</a>
+      </div>
+    </div>
+    <div class="clearfix"/>
+  
+    <div id="content">
+      <div class="post">
+  <h1>Purging old cruise builds</h1>
+  <div class="date">September 29, 2010</div>
+  <div class="body">
+  Continuous Integration is such an important idea and I love <a href="http://cruisecontrolrb.thoughtworks.com/">CruiseControl.rb</a> as its so easy to use.  However one thing that drives me crazy is that it keeps all builds <span style="font-style:italic;">forever</span>.  Over the past few years we run out of disk space every few months causing all our builds to start failing and some tedious manual work to delete some directories.  <br /><br />Today I decided to do something about it and wrote a script to remove all but the most recent builds.  After all why do I want an old build lying around as that's what Git of Subversion is for!<br /><br />If you want to give it a try you can download the script from <a href="http://github.com/alexrothenberg/purge_old_cruise_builds">http://github.com/alexrothenberg/purge_old_cruise_builds</a><br /><br />This seems to be working for me and I'd love to hear if I'm making some assumptions you need to change to adapt it to your uses.<div class="blogger-post-footer"><img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/86313661235162475-2474421813173225023?l=www.alexrothenberg.com' alt='' /></div>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+    </div>
+
+    <div id='footer'>
+      &copy; 2011 lastpixel
+    </div>
+
+  </div>
+
+</body>
+</html>

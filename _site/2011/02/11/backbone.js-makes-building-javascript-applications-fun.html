@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Use it or Lose it Blog - Backbone.js Makes Building JavaScript Applications Fun</title>
+   <meta name="author" content="Stuart Robinson" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/uioli">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+  <div id="site">
+    <div id="header">
+      <h1>The Blog @ Use it or Lose it</h1>
+      <div id="menu">
+        <a href="/index.html" id="blog_link">Blog Articles</a>
+        <a href="/open_source.html" id="github_link">Open Source</a>
+        <a href="/about_me.html" id="about_me">About Me</a>
+      </div>
+    </div>
+    <div class="clearfix"/>
+  
+    <div id="content">
+      <div class="post">
+  <h1>Backbone.js Makes Building JavaScript Applications Fun</h1>
+  <div class="date">February 11, 2011</div>
+  <div class="body">
+  <p>Like many developers I&#8217;ve had a long, complicated relationship with Javascript. Especially with libraries like <a href='http://jquery.com'>jquery</a> it&#8217;s incredibly easy to add interesting behavior to your pages, but unless you&#8217;re very careful its also likely that you&#8217;ll end up with a mess of spaghetti javascript. I know as I&#8217;ve gotten myself into that mess and abandoned many projects because they were just too hard to change. All this has changed with some of new libraries out there that help you write your javascript following the MVC pattern.</p>
+
+<p>Today I&#8217;m going to talk about <a href='http://documentcloud.github.com/backbone/'>backbone.js</a> and show how it helped me and two friends build a rich one-page application to understand an exception stack trace. Backbone.js describes itself as supplying structure to JavaScript-heavy applications by providing models with key-value binding and custom events, collections with a rich API of enumerable functions, views with declarative event handling, and connects it all to your existing application over a RESTful JSON interface.</p>
+
+<p>There are a number of <a href='http://liquidmedia.ca/blog/2011/01/backbone-js-part-1/'>tutorials</a> and <a href='http://documentcloud.github.com/backbone/#examples'>examples</a> available out there to get you started. The basic idea is to uses backbone.js to organize your code into models, views and controllers.</p>
+
+<h2 id='what_is_codebuddy'>What is CodeBuddy</h2>
+
+<p><a href='http://rubygems.org/gems/code_buddy'>CodeBuddy</a> is the application I&#8217;ll describe. It helps you navigate an exception stack raised by your Rails app or any other stack you paste in. I worked on it with <a href='http://patshaughnessy.net'>Pat Shaughnessy</a> and <a href='http://www.flyingmachinestudios.com/'>Daniel Higginbotham</a> and Pat produced a super article describing <a href='http://patshaughnessy.net/2010/12/13/codebuddy-see-your-ruby-stack-come-alive'>what CodeBuddy is and how to use it</a>.</p>
+
+<p>There is some server-side code that replaces the Rails Show Exceptions page and syntax highlights a snippet of source code for each line in the stack but for this article I&#8217;m going to ignore that and focus on the interactive page and the javascript behind it.</p>
+
+<p>Below is a picture showing a stack trace the background and the code snippet for the currently selected line in front. Now a picture is okay but to really get a sense of it I suggest you follow this link to <a href='/examples/code_buddy' target='_blank'>experience Code Buddy in action</a> - try pressing ↑ or ↓ or double clicking a few lines in the stack then press <code>s</code>.</p>
+
+<p><img src='/examples/code_buddy/images/code_buddy_screenshot.png' alt='Code Buddy' /></p>
+
+<p>There&#8217;s a lot going on here and if we had tried building this before discovering backbone.js we probably would have had created a mess - mixing javascript and html that quickly would have become hard to change. I&#8217;m going to show you how backbone let us separate the models from the views and create something that was not hard to grow.</p>
+
+<p>Let&#8217;s get into the technical details!</p>
+
+<h2 id='organizing_our_data_in_backbone_models'>Organizing our data in Backbone Models</h2>
+
+<p>We want to follow good OO design principles and thinking about this our exception stack is really just a few objects:</p>
+
+<ul>
+<li>
+<p>A <code>Stack</code></p>
+
+<ul>
+<li>has many <code>Addresses</code></li>
+
+<li>knows which <code>Address</code> is selected</li>
+</ul>
+</li>
+
+<li>
+<p>Each <code>Address</code> has</p>
+
+<ul>
+<li>path to a file</li>
+
+<li>line number</li>
+
+<li>snippet of code</li>
+</ul>
+</li>
+</ul>
+
+<p>We can build this as a JSON object like</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l javascript -O encoding=utf-8 -f html</p>
+
+<p>The first step is to turn this into backbone models.</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l javascript -O encoding=utf-8 -f html</p>
+
+<p>The way we build a model in backbone is by extending <code>Backbone.Model</code>. When extending we can add custom behavior if we want. In our example we tell the <code>Stack</code> to contain a collection of <code>Address</code> objects in the <code>Addresses</code> collection. We use the backbone collection framework to define <code>Addresses</code> and tell it that it is a collection of <code>Address</code> model objects. These models will use the default backbone behavior for the rest which includes read/write access to its properties <code>get</code> or <code>set</code>.</p>
+
+<p>Now that they&#8217;re defined, we&#8217;re ready to interact with these models. For example below is what you&#8217;d see using the Chrome javascript console (I&#8217;m showing the output as comments for readability)</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l javascript -O encoding=utf-8 -f html</p>
+
+<p>We now have an object hierarchy with default behavior which we can (and will) extend in a bit but first let&#8217;s build some views and get a page we can look at.</p>
+
+<h2 id='building_the_ui_with_backbone_views'>Building the UI with Backbone Views</h2>
+
+<p>We&#8217;re going to build</p>
+
+<ul>
+<li>A <code>StackView</code> that contains many <code>AddressViews</code></li>
+
+<li>Each <code>AddressView</code> will display a single line from the stack.</li>
+
+<li>Each view will be tied to one of our model objects</li>
+</ul>
+
+<p>It will look something like this:</p>
+
+<p><img src='/examples/code_buddy/images/annotated_screenshot.png' alt='Code Buddy views on the page' /></p>
+
+<p>We can start with a <code>StackView</code> that&#8217;s tied to the <code>Stack</code> model. Creating a backbone view is very similar to how we created our models - we extend <code>Backbone.View</code> and can override behavior if we want.</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l javascript -O encoding=utf-8 -f html</p>
+
+<p>In this case we overrode the <code>initializer</code> function to create an <code>AddressView</code> for each address. It also uses jQuery to add the <code>AddressView&#39;s</code> html within the page&#8217;s <code>#stack</code> element.</p>
+
+<p>To do the iteration we use another powerful javascript library called <a href='http://documentcloud.github.com/underscore/'>underscore.js</a>. Underscore.js gives us a ruby-like collection methods letting us write <code>.each(this.addOneAddress)</code>. This will iterate over all the <code>addressses</code> calling the <code>addOneAddress</code> function on each one. Underscore.js also gives us erb-like templating we&#8217;ll use in the <code>AddressView</code>&#8230;let&#8217;s take a look at that view.</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l javascript -O encoding=utf-8 -f html</p>
+
+<p>You can see the template and how it does look like erb. It defines the html that will be displayed for each address and its able to access properties in the model like <code>path</code> and <code>line</code>. The template gets applied in the <code>render</code> function with the line <code>this.template(this.model.toJSON())</code>. Finally, <code>tagName</code> is used to wrap this html in an <code>li</code> tag.</p>
+
+<p>Now we can put it all together to see on a page. We can start with a toplevel page that has an element with <code>stack</code>, includes our models and views and tells them to load.</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l html -O encoding=utf-8 -f html</p>
+
+<p>After the page loads and the views render it changes the <code>#stack</code> div to have all this</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l html -O encoding=utf-8 -f html</p>
+
+<p>So far this is a lot of framework and structure for a simple page but now is when it gets interesting and backbone reveals its true power!</p>
+
+<h2 id='showing_code_for_the_selected_address'>Showing code for the selected address</h2>
+
+<p>Let&#8217;s say we want to mark one address selected and show the code for that one.</p>
+
+<p><img src='/examples/code_buddy/images/code_buddy_screenshot_with_selection.png' alt='Showing Code for selected Addresss' /></p>
+
+<p>We can start by adding an element to the html called <code>code-viewer</code></p>
+
+<p>Liquid error: No such file or directory - pygmentize -l html -O encoding=utf-8 -f html</p>
+
+<p>Now we want to create a <code>StackView</code> to put the right code in there</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l javascript -O encoding=utf-8 -f html</p>
+
+<p>In this view we used our models to find which address was selected <code>CodeBuddy.stack.selectedAddress()</code> so let&#8217;s add that method.</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l javascript -O encoding=utf-8 -f html</p>
+
+<p>That&#8217;s it, now we have a code view on top of the stack view and our code is still clean and well organized. I&#8217;m not afraid to keep going and make our next change.</p>
+
+<h2 id='changing_the_selected_address'>Changing the selected address</h2>
+
+<p>Oh, we just got a new requirement to be able to scroll up and down through the stack and see the code window change as we go.</p>
+
+<p>We add some more functions to our Stack Model so we can change the selection and we also tell it to call the <code>selectionChanged</code> function whenever the <code>selected</code> property changes. Calling a function on a property change is something that&#8217;s given to us with <a href='http://documentcloud.github.com/backbone/#Events'>backbone events</a>. Getting the view to update itself is also easy we just tell it to with <code>CodeBuddy.codeView.render()</code></p>
+
+<p>Liquid error: No such file or directory - pygmentize -l javascript -O encoding=utf-8 -f html</p>
+
+<p>The last thing we need to do is give some way for the user to change the selection. We decided to use <a href='http://code.google.com/p/js-hotkeys/'>jQuery Hotkeys</a> to bind to the up and down arrows (↑ or ↓).</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l javascript -O encoding=utf-8 -f html</p>
+
+<h2 id='conclusion'>Conclusion</h2>
+
+<p>I hope this example has shown a little of the power of using backbone.js when you need to write a complex javascript application.<br />If you want to see the actual application its all on Github in <a href='https://github.com/patshaughnessy/code_buddy/blob/master/lib/code_buddy/public/javascripts/code_buddy.js'>code_buddy.js</a></p>
+
+<p>This was our first project working with backbone.js and I&#8217;m sure there&#8217;s much more we can learn but we&#8217;ve found that it lets us write modular code with many small methods which feels much closer to writing Ruby than my previous forays into javascript.</p>
+
+<p><strong>Backbone.js makes writing a javascript application fun!</strong></p>
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+    </div>
+
+    <div id='footer'>
+      &copy; 2011 lastpixel
+    </div>
+
+  </div>
+
+</body>
+</html>

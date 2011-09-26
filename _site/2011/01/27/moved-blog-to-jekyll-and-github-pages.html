@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Use it or Lose it Blog - Moved Blog to Jekyll and GitHub Pages</title>
+   <meta name="author" content="Stuart Robinson" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/uioli">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+  <div id="site">
+    <div id="header">
+      <h1>The Blog @ Use it or Lose it</h1>
+      <div id="menu">
+        <a href="/index.html" id="blog_link">Blog Articles</a>
+        <a href="/open_source.html" id="github_link">Open Source</a>
+        <a href="/about_me.html" id="about_me">About Me</a>
+      </div>
+    </div>
+    <div class="clearfix"/>
+  
+    <div id="content">
+      <div class="post">
+  <h1>Moved Blog to Jekyll and GitHub Pages</h1>
+  <div class="date">January 27, 2011</div>
+  <div class="body">
+  <p>I just moved my blog to <a href='http://jekyllrb.com'>Jekyll</a> and <a href='http://pages.github.com'>Github Pages</a> which I hope will help me get back into the rhythm of posting regularly.</p>
+
+<h2 id='why_did_i_switch'>Why did I switch?</h2>
+
+<p>There were several things I wanted to change</p>
+
+<ul>
+<li><em>Syntax highlighting for my code</em> &#8212; Jekyll uses <a href='http://pygments.org/'>pygments</a> which supports about a bazillion <a href='http://pygments.org/languages/'>languages</a> including &#8220;Gherkin&#8221; (cucumber) and blogger had nothing.</li>
+
+<li><em>Authoring tools I wanted</em> &#8212; The blogger wysiwyg editor never really worked for me and I&#8217;d prefer to use <a href='http://macromates.com'>TextMate</a> and <a href='http://en.wikipedia.org/wiki/Markdown'>markdown</a> or <a href='http://en.wikipedia.org/wiki/Textile_%28markup_language%29'>textile</a> anyway.</li>
+
+<li><em>New site design</em> &#8212; Making the move gave me a chance to redo my design. The old one felt cluttered and dated and I hope this new one is not.</li>
+
+<li><em>Geek street cred</em> &#8212; I like having everything on <a href='https://github.com/alexrothenberg/alexrothenberg.github.com'>github</a> and besides all the cool kids are doing it :)</li>
+</ul>
+
+<p><em>Jekyll</em> is a gem that converts a structured directory of pages and posts written in markdown, textile or html into static html files that can be served by apache or nginx. Of course there&#8217;s an <a href='https://github.com/mojombo/jekyll/wiki'>official definition</a> that explains it in more detail.</p>
+
+<p>With <em>Github Pages</em> I just have to create a git repository <a href='https://github.com/alexrothenberg/alexrothenberg.github.com'>alexrothenberg.github.com</a> and with each push github runs jekyll to generate a static site it serves up at <a href='http://alexrothenberg.github.com'>http://alexrothenberg.github.com</a></p>
+
+<h2 id='how_did_i_create_this_new_site'>How did I create this new site?</h2>
+
+<h3 id='1_create_an_empty_site'>1. Create an empty site</h3>
+
+<p>There are lots of <a href='https://github.com/mojombo/jekyll/wiki/Sites'>sites</a> others have created with jekyll to peruse for design ideas. I spent some time looking through them and eventually picked one to use as a template. I copied one and pushed it to a new project on github called <a href='https://github.com/alexrothenberg/alexrothenberg.github.com'>alexrothenberg.github.com</a>.</p>
+
+<h3 id='2_get_my_existing_content'>2. Get my existing content</h3>
+
+<p>First I had to get my old content out of blogger into a Jekyll site. There are instructions for <a href='https://github.com/mojombo/jekyll/wiki/Blog-Migrations'>migrating</a> from many different platforms (including <a href='http://coolaj86.info/articles/migrate-from-blogger-to-jekyll.html'>from blogger to jekyll</a>). I followed the instructions to &#8220;import with vilcans&#8217; Jekyll rss_importer&#8221; and just had to change the rss url to http://www.alexrothenberg.com/feeds/posts/full?alt=rss&amp;max-results=1000 since I had more than 25 posts.</p>
+
+<p>I now had my posts in the <em>_posts</em> folder. I copied these posts into my <em>alexrothenberg.github.com/_posts</em> and had a version of my blog with all my old posts.</p>
+
+<h3 id='3_syntax_highlighting_code'>3. Syntax highlighting code</h3>
+
+<p>I next did some experimentation with the old posts to see how the code highlighting worked. It&#8217;s very natural and in-the-flow.</p>
+
+<p>While writing my article I just add a block like</p>
+
+<pre><code>{ % highlight ruby %}
+class User
+  def name
+    [first, last].join(&#39; &#39;) 
+  end
+end
+{ % endhighlight %}</code></pre>
+
+<p>and get this fantastic output</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html</p>
+
+<p>Well not quite&#8230; It generated html with all sorts of css classes but I couldn&#8217;t find css stylesheets out there with the <a href='http://alternateidea.com/blog/articles/2006/01/03/textmate-vibrant-ink-theme-and-prototype-bundle'>Vibrant Ink</a> theme I like.<br />Through some trial and error I created my own <a href='https://github.com/alexrothenberg/alexrothenberg.github.com/blob/master/stylesheets/vibrant_ink.css'>vibrant_ink.css</a></p>
+
+<h3 id='4_disqus_comments'>4. Disqus comments</h3>
+
+<p>Because Jekyll generates static pages it has no commenting engine so I have to integrate with an external service. I decided to go with <a href='http://disqus.com'>disqus</a>.<br />Adding it into my site was simple but getting my old comments in turned out to be much harder than it should have been.</p>
+
+<p>First I went to disqus.com, signed up for an account and used their admin too to create a site for www.alexrothenberg.com. They give you a bit of javascript to add to your page. I added this to my <a href='https://github.com/alexrothenberg/alexrothenberg.github.com/blob/master/_layouts/post.html#L12-14'>_layouts/post.html</a> and I was done.</p>
+
+<p>It looked like it would be just as easy to import my comments from blogger as they have a big <em>import from blogger</em> button on their admin site under Tools-&gt;Import/Export. I ran it and I suddenly had all my old comments. But this is where things started to break down. Blogger ties the comments to <a href='http://www.blogger.com/profile/18273757675203348828'>blogger profiles</a> instead of an email address so none of my comments had avatar pictures next to them.</p>
+
+<p>What followed was a frustrating journey to try and edit the comments using their admin tool. The first thing I tried was using their admin tool but it doesn&#8217;t let you edit a commenter&#8217;s email or url so I couldn&#8217;t stick email addresses in when I knew them (for example I know my own email). My next approach was to export the comments in disqus, edit the xml file it gave me and re-upload. The problem here is that the exported xml uses a different format than the import accepts although they don&#8217;t tell you that when you try importing the file you exported it just tells you 0 items imported - how annoying?!?</p>
+
+<p>After a lot of trial and error I wound up with all my comments in an xml file that disqus could import. In case you want to do something similar here are the steps I followed</p>
+
+<ol>
+<li>Create a temp site in disqus (I called mine alexrothenberg1)</li>
+
+<li>Import the comments from blogger using the Disqus import tool</li>
+
+<li>Export those comments to an xml file - I saved mine in <a href='https://github.com/alexrothenberg/alexrothenberg.github.com/blob/master/_disqus_import/exported_comments.xml'>alexrothenberg.github.com/_disqus_import/exported_comments.xml</a></li>
+
+<li>Run my script <a href='https://github.com/alexrothenberg/alexrothenberg.github.com/blob/master/_disqus_import/export2import'>alexrothenberg.github.com/_disqus_import/exported2import</a> to migrate the format to a Word Press XFR and change the timestamp format.</li>
+
+<li>Hand edit <br /><a href='https://github.com/alexrothenberg/alexrothenberg.github.com/blob/master/_disqus_import/import_comments.xml'>alexrothenberg.github.com/_disqus_import/import_comments.xml</a> to update the emails and urls for each comment (luckily I didn&#8217;t have that many old comments)</li>
+
+<li>Delete the temp discus site and create a new one</li>
+
+<li>Import my XFR file to the new site</li>
+
+<li>Jekyll and Blogger use different formats for post urls (jekyll includes year/month/date while blogger is year/month) so we need to run the disqus Migrate Threads-&gt;Upload a URL Map tool to upload a file like <a href='https://github.com/alexrothenberg/alexrothenberg.github.com/blob/master/_disqus_import/url.map'>alexrothenberg.github.com/_disqus_import/url.map</a></li>
+</ol>
+
+<h3 id='5_mapping_my_domain_name'>5. Mapping my domain name</h3>
+
+<p>At this point I have a blog site up at http://alexrothenberg.github.com and its only a quick step to start serving it at <a href='http://www.alexrothenberg.com'>http://www.alexrothenberg.com</a>.</p>
+
+<ol>
+<li>Create a <a href='https://github.com/alexrothenberg/alexrothenberg.github.com/blob/master/CNAME'>CNAME</a> containing <code>www.alexrothenberg.com</code> in my project</li>
+
+<li>Update the dns entry in my domain to create a CNAME record aliasing <code>www</code> to <code>alexrothenberg.github.com</code></li>
+</ol>
+
+<h2 id='authoring_and_publishing'>Authoring and Publishing</h2>
+
+<p>Now that the site is up and running it was time to write my first article (this one).</p>
+
+<ol>
+<li>
+<p><code>jekyll --auto --server</code></p>
+
+<p>Starts the jekyll server running at http://localhost:4000 and monitors the files so it regenerates each time I save an edit</p>
+</li>
+
+<li>
+<p><code>newpost Moved Blog to Jekyll and GitHub Pages</code></p>
+
+<p>Creates a new empty post using a script I stuck in my project <a href='https://github.com/alexrothenberg/alexrothenberg.github.com/blob/master/_bin/newpost'>_bin</a> (thanks <a href='https://github.com/al3x'>al3x</a> for this <a href='https://gist.github.com/100171/26dfa6f55f442c223c8491fb2bfaea15bda7351a'>gist</a>)</p>
+</li>
+
+<li>
+<p>Start writing content in <a href='https://github.com/alexrothenberg/alexrothenberg.github.com/blob/master/_posts/2011-01-27-moved-blog-to-jekyll-and-github-pages.md'>_posts/2011-01-27-moved-blog-to-jekyll-and-github-pages.md</a></p>
+
+<p>Each time I hit save I can preview in a few seconds at http://localhost:4000</p>
+</li>
+
+<li>
+<p><code>git commit -am &#39;wrote the article&#39;</code></p>
+</li>
+
+<li>
+<p><code>git push origin master</code></p>
+</li>
+</ol>
+
+<p>In a few seconds github processes the site into static files and its published for all the world to see.</p>
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+    </div>
+
+    <div id='footer'>
+      &copy; 2011 lastpixel
+    </div>
+
+  </div>
+
+</body>
+</html>

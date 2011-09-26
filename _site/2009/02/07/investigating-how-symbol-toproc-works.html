@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - Investigating how Symbol to_proc works</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>Investigating how Symbol to_proc works</h1>
+  <div class="date">February 07, 2009</div>
+  <div class="body">
+  <div>
+  One of the things I love about Ruby is how expressive it is and how with open classes it can be optimized to become even more expressive. Since I started using Ruby I don't think I've written a single for or while loop - something I couldn't have imagined saying with any other language! Of course I do this by using iterators and writing code like<br>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+  
+  <br>
+  I recently started discovered I could write the same thing even more concisely (as long as I'm using Rails or Ruby 1.9)<br>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+  <br>
+  I decided to investigate how this works.<br>
+  <br>
+  First I found some good posts by <a href="http://pragdave.pragprog.com/pragdave/2005/11/symbolto_proc.html">Prag Dave</a> and <a href="http://railscasts.com/episodes/6">Ryan Bates</a> and at <a href="http://www.infoq.com/news/2008/02/to_proc-currying-ruby19">InfoQ</a>. This helped but I still didn't understand it all so decided to dig further.<br>
+  <br>
+  First I took a look at how Rails extends <a href="http://github.com/rails/rails/blob/24ac1d6bdc860d234e70dd4cd4713bd13ac9d40d/activesupport/lib/active_support/core_ext/symbol.rb">Symbol</a><br>
+  <br>
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+<br>
+  <br>
+  So they defined the <span style="font-family: courier new;">to_proc</span> method on symbol and that means the new code will be called when we write <span style="font-family: courier new;">&amp;:name</span> because it magically gets transformed into <span style="font-family: courier new;">:name.to_proc</span>. I learned something but still needed to learn more to understand how it all works.<br>
+  <br>
+  Why does the <span style="font-family: courier new;">&amp;</span> cause Ruby to call <span style="font-family: courier new;">to_proc</span>? I knew that <span style="font-family: courier new;">&amp;</span> in the last parameter declaration will pass a provided block as a parameter but this seems to be doing the reverse. Calling a method as an argument but having it interpreted as a block. I tried a couple of experiments in irb<br>
+  <br>
+  Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+  <br>
+  It was not all as I expected but some reading through the <a href="http://www.pragprog.com/titles/ruby/programming-ruby">PickAxe book</a> led me to a better understanding. I found this paragraph in the Calling A Method section (page 115 in my copy)<br>
+  <br>
+  <blockquote>
+    If the last argument to a method is preceded by an ampersand, Ruby assumes that it is a Proc object.<br>
+    It removes it from the parameter list, converts the Proc object into a block, and associates it with the method.<br>
+  </blockquote><br>
+  <br>
+  Ok so now I know why when Ruby sees <span style="font-family: courier new;">User.all.collect(&amp;:name)</span> it invokes the <span style="font-family: courier new;">collect</span> method with <span style="font-family: courier new;">name.to_proc</span> as a block. Next, it was time to figure out why the code Rails put in the to_proc method worked. I took a look at the <a href="http://github.com/evanphx/rubinius/blob/83ab3fd8b6645ac7389e97b5a1969e5eb3b2b038/kernel/common/enumerable.rb">Rubinius implementation Enumerable</a><br>
+  <br>
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+  <br>
+  Again I decided to experiment with irb to see what each part of the to_proc implementation was doing. First I redefined the Symbol to_proc again with a puts so I could confirm what was going on.<br>
+  <br>
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+  <br>
+  Its brute force but tells us everything we need to know. As expected <span style="font-family: courier new;">collect</span> yields to our proc/block with the element in a variable length argument <span style="font-family: courier new;">[1]</span>, it extracts the <span style="font-family: courier new;">1</span> and sends it the <span style="font-family: courier new;">to_s</span> method with no arguments returning the string <span style="font-family: courier new;">"1"</span>. At this point I think I understand how it all works and decide to confirm by running a few more (more complicated) tests in irb<br>
+  <br>
+
+  <br>
+  It all works as expected and I decide I know as much as I need to about this and call it a day.<br>
+  <br>
+  So why did I bother figuring all this out and then writing it up? Mostly because I didn't know how it worked and thought there was some 'magic' going on. I could have continued using this feature without understanding how it worked but now that I understand how it works if some need ever arises for me to do some similar magic I know how to go about it. As for writing it up I hope someone else may read this and find it useful but by I increased my own understanding through the act of writing.
+  <div class="blogger-post-footer">
+    <img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/86313661235162475-8845862891270009488?l=www.alexrothenberg.com' alt=''>
+  </div>
+</div>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>

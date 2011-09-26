@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - Buy services and Build websites</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>Buy services and Build websites</h1>
+  <div class="date">November 16, 2008</div>
+  <div class="body">
+  <p>
+  Where I work there's recently been a lot of talk about how to make the decision whether to buy or build software. I've recently concluded that while you can buy a commoditized service you can not buy a website!<br>
+  <br>
+  What I've seen is people thinking we could "buy" (or download open source) a site but then realize they want to change the branding, adapt the terminology to match our business. combine it with another product or add one extra piece of functionality that the existing site doesn't have. Whatever the APIs provided by the product you're left with custom software written on top of the product you bought. I've seen this with big commercial products like Documentum and open source products like Drupal. I now believe that there's no such thing as "a little" customization and you can only buy a site if you want 0 customization (applying a skin or inserting your logos are acceptable).<br>
+  <br>
+  This does not mean everyone should develop custom software from scratch. There are tons of opportunities to buy commoditized services and write just a little custom code to glue them together. This allows you to focus on the aspects of your site that are business differentiators (the branding, the terminology, your workflows, your business rules, etc) without fighting the vendor's idea of those things. You don't have to write too much code as what we continually revise upward what we consider a commoditized service (i.e. it used to be document storage and is becoming document management with workflow and security).<br>
+  <br>
+  The process of creating a blog aggregator as I described in my last post <a href="http://alexrothenberg.blogspot.com/2008/11/blog-aggregator-wayweworkit.html">I built a Blog Aggregator</a> showed me how true this is. I used Atom and RSS parsing and generating service which left me just to build a small site with the UI, security and glue holding it all together. Its just a small example but as I look around <a href="http://github.com/">github</a> I'm struck that the most interesting packages are plugins and gems for others to use and the less interesting ones are complete sites. This may be a no brainer for the Open Source community but is something that I am just realizing and I think that enterprises and commercial vendors still need to learn.
+</p>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>

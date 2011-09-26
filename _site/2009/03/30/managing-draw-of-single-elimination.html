@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - Managing the draw of a single-elimination tournament</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>Managing the draw of a single-elimination tournament</h1>
+  <div class="date">March 30, 2009</div>
+  <div class="body">
+  My company has been running a <a href="http://en.wikipedia.org/wiki/Go_%28board_game%29">GO</a> tournament and since its around NCAA March Madness time I thought it'd be easy to find a site to manage the draw.  I looked but couldn't find anything that did what I wanted so I wrote my own.  Caveat: I just spent a few days on this and it could stand to be enhanced with more features and a rewrite of the ui implementation but I'm open to suggestions if anyone finds this useful.<br /><br />To use it <br /><ol><br /> <li>Edit the file lib/names.txt with a the players in your tournament</li><br /> <li>Run 'rake create_tournament</li><br /></ol><br /><br />Now when you view the site you'll see a draw that looks something like this.<br /><br /><a onblur="try {parent.deselectBloggerImageGracefully();} catch(e) {}" href="http://4.bp.blogspot.com/_36rptmL_RFc/SdDfviojZMI/AAAAAAAADNw/U1bcraUPbAU/s1600-h/tournament-draw.png"><img style="cursor: pointer; width: 232px; height: 320px;" src="http://4.bp.blogspot.com/_36rptmL_RFc/SdDfviojZMI/AAAAAAAADNw/U1bcraUPbAU/s320/tournament-draw.png" alt="" id="BLOGGER_PHOTO_ID_5318997167768298690" border="0" /></a><br /><br />For games with 2 players - all first round games and games where the previous round winners have been determined - you'll be able to click the link and set which player won.<br /><br />This was all very quickly thrown together but if you're interested in hosting any sort of single-elimination tournament check it out on github <a href="http://github.com/alexrothenberg/tournament-draw/">tournament-draw</a>.  <br /><br />Let me know if you use it and how you'd like to enhance it from the quick application it is today.<div class="blogger-post-footer"><img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/86313661235162475-5524234857417099518?l=www.alexrothenberg.com' alt='' /></div>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>

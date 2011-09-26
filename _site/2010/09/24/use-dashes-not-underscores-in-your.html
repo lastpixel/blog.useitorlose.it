@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Use it or Lose it Blog - Use dashes not underscores in your domain name</title>
+   <meta name="author" content="Stuart Robinson" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/uioli">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+  <div id="site">
+    <div id="header">
+      <h1>The Blog @ Use it or Lose it</h1>
+      <div id="menu">
+        <a href="/index.html" id="blog_link">Blog Articles</a>
+        <a href="/open_source.html" id="github_link">Open Source</a>
+        <a href="/about_me.html" id="about_me">About Me</a>
+      </div>
+    </div>
+    <div class="clearfix"/>
+  
+    <div id="content">
+      <div class="post">
+  <h1>Use dashes not underscores in your domain name</h1>
+  <div class="date">September 24, 2010</div>
+  <div class="body">
+  I recently ran into an issue where users hitting my development server with Internet Explorer kept getting redirected back to my login page no matter how many times they signed in.  Everything worked fine for all other browsers I tested and it even worked fine on Internet Explorer when pointing at http://localhost.<br /><br />After much investigating it turns out the problem lies in the name of my development server.  I picked a name like http://myapp_dev.alexrothenberg.com and it was the underscore in myapp_dev that caused the problem.  It turns out that IE will not set a session cookie for a domain with a hostname that contains an underscore.<br /><br /><a href="http://blogs.msdn.com/b/ieinternals/archive/2009/08/20/wininet-ie-cookie-internals-faq.aspx">According to microsoft</a> this is not a bug but a feature <br /><blockquote>Q5: IE won’t set a cookie when the hostname/domain contains an underscore?<br /><br />A: Correct. Technically, underscore is not a DNS character, and while Windows will let you use an underscore when naming your machine, it warns you that doing so may cause problems. One such problem is that WinINET blocks attempts to set cookies on such domains.<br /></blockquote><br /><br />OK, so it looks like IE will let me go to the page but doesn't set the session cookie so my site sees each request as part of a new session by an unauthenticated user and redirects to the login page over and over.  <br /><br />I did a little more research and <a href="http://en.wikipedia.org/wiki/Hostname#Restrictions_on_valid_host_names">according to Wikipedia</a> Microsoft is right and underscores are not allowed in hostnames<br /><br /><blockquote>The Internet standards (Request for Comments) for protocols mandate that component hostname labels may contain only the ASCII letters 'a' through 'z' (in a case-insensitive manner), the digits '0' through '9', and the hyphen ('-')  ...<br />While a hostname may not contain other characters, such as the underscore character (_), other DNS names may contain the underscore.<br /></blockquote><br /><br />I'm not sure why IE allows the browsing but not the cookie as that turned this into a subtle bug that was especially hard to track down since Firefox, Safari and Chrome all set the cookie so my site works.  From now on I'll have to remember not to use underscores but to use dashes instead like http://myapp-dev.alexrothenberg.com which should work across all browsers.<div class="blogger-post-footer"><img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/86313661235162475-1190859133036924356?l=www.alexrothenberg.com' alt='' /></div>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+    </div>
+
+    <div id='footer'>
+      &copy; 2011 lastpixel
+    </div>
+
+  </div>
+
+</body>
+</html>

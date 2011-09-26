@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Use it or Lose it Blog - How Bundler Groups relate to the Rails Environment</title>
+   <meta name="author" content="Stuart Robinson" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/uioli">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+  <div id="site">
+    <div id="header">
+      <h1>The Blog @ Use it or Lose it</h1>
+      <div id="menu">
+        <a href="/index.html" id="blog_link">Blog Articles</a>
+        <a href="/open_source.html" id="github_link">Open Source</a>
+        <a href="/about_me.html" id="about_me">About Me</a>
+      </div>
+    </div>
+    <div class="clearfix"/>
+  
+    <div id="content">
+      <div class="post">
+  <h1>How Bundler Groups relate to the Rails Environment</h1>
+  <div class="date">July 18, 2011</div>
+  <div class="body">
+  <p>Recently I&#8217;ve seen more and more Gemfiles that organize gems into groups and it got me wondering how bundler knows which groups to load. For the most part two things happen</p>
+
+<ol>
+<li>At install time - Bundler includes a capistrano task that installs all gems except those only in the development or test groups on your server</li>
+
+<li>At execution time - Rails tells bundler to load the default gems and those specific to your environment (development, staging or production)</li>
+</ol>
+
+<h2 id='how_bundler_installs_gems_into_your_bundle'>How Bundler installs gems into your bundle</h2>
+
+<p>To tell bundler to use bundler on the server all you need to do is add the one line below to your Capfile</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html</p>
+
+<p>This creates a capistrano task <code>bundle:install</code> that ultimately runs something like the command below on your server</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l bash -O encoding=utf-8 -f html</p>
+
+<p>Okay so it ran a <code>bundle install</code> but what really happened? Let&#8217;s take that command one piece at a time.</p>
+
+<ul>
+<li>
+<p><code>--gemfile /srv/my_app/releases/20110715204318/Gemfile</code> tells it to use our Gemfile, that makes sense.</p>
+</li>
+
+<li>
+<p><code>--path /srv/my_app/shared/bundle</code> tells it where to put the bundle. Let&#8217;s see what that means.</p>
+
+<p>It looks like it created all the <code>rubygems</code> directories for to isolate the gems for this project (very similarly to <a href='http://beginrescueend.com/gemsets'>rvm gemsets</a>)</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l bash -O encoding=utf-8 -f html</p>
+</li>
+
+<li>
+<p><code>--quiet</code> hmm what else can I say</p>
+</li>
+
+<li>
+<p><code>--without development test</code> Aha so here&#8217;s where it tells bundler to skip the <code>development</code> and <code>test</code> groups. so allall gems outside a group or in a group other than <code>development</code> or <code>test</code> are installed.</p>
+</li>
+</ul>
+
+<p>How does Bundler remember these settings when it loads Rails and tries to load the bundle? It saves them away in a <code>.bundle</code> directory <code>cat .bundle/config</code> shows us</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l yaml -O encoding=utf-8 -f html</p>
+
+<p>Now we understand how Bundler and Capistrano work together during a deployment to setup the bundle and install gems on the server. Let&#8217;s take a look at what happens when our app starts up.</p>
+
+<h2 id='how_rails_and_bundler_load_your_gems_according_to_the_rails_environment'>How Rails and Bundler load your gems according to the Rails Environment</h2>
+
+<p>In your <code>config/application.rb</code>, right near the top, you have a line like this.</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l yaml -O encoding=utf-8 -f html</p>
+
+<p>Rails tells bundler to require all the gems in the <code>:default</code> group and also the current <code>Rails.env</code> group. It uses the <code>.bundle/config</code> file to know where the gems are installed and find them. So that&#8217;s how the gems appropriate for your environment get automatically loaded when Rails starts.</p>
+
+<h2 id='what_if_you_create_a_gem_group_that_doesnt_correspond_to_any_rails_env'>What if you create a gem group that doesn&#8217;t correspond to any Rails env?</h2>
+
+<p>This is the problem that started me down this investigation. I came across a <code>Gemfile</code> with a group called <code>cruise</code> like this</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html</p>
+
+<p>It was working meaning our cruise server ran <a href='http://metric-fu.rubyforge.org/'>metric_fu</a> but why?</p>
+
+<ol>
+<li>
+<p>We weren&#8217;t using capistrano to run bundle install and instead just checked whether we were on our cruise server and ran the command <code>bundle install</code> in our Rakefile. <em>Aside: We are looking into <a href='http://jenkins-ci.org/'>Jenkins</a> as a continuous integration server that supports bundler</em> This explains why the <code>metric_fu</code> was installed into our bundle (there was no <code>--without</code> so all gems are installed)</p>
+</li>
+
+<li>
+<p>When our Rails app starts it would not load metric_fu becuase <code>Rails.env</code> will never be <code>cruise</code> when the <code>application.rb</code> line <code>Bundler.require(:default, Rails.env)</code> runs. We had worked around that by doing the require ourselves.</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html</p>
+</li>
+</ol>
+
+<p>While this does work in that our cruise build works it has the downside of installing <code>metric_fu</code> (and all the gems it depends on) on our production server! That&#8217;s because the <code>bundler/capistrano</code> task installs all gems not marked <code>development</code> or <code>test</code> and since <code>metric_fu</code> is marked <code>cruise</code> it gets installed. Now Rails will not load it so its not that bad but its still not good. We can take a quick look on our server to verify</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l bash -O encoding=utf-8 -f html</p>
+
+<p>Fortunately this is really simple to fix, we just need to change our <code>Gemfile</code> and move <code>metric_fu</code> into the <code>test</code> group</p>
+
+<p>Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html</p>
+
+<p>My advice it <strong>do not</strong> create any gem groups that do not correspond to your Rails environments as that seems to be what the bundler-capistrano and bundler-rails integrations expect.</p>
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+    </div>
+
+    <div id='footer'>
+      &copy; 2011 lastpixel
+    </div>
+
+  </div>
+
+</body>
+</html>

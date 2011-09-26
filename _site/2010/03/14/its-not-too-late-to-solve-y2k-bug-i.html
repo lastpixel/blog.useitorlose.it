@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Use it or Lose it Blog - Its not too late to solve a Y2K bug - I found one in 2010</title>
+   <meta name="author" content="Stuart Robinson" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/uioli">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+  <div id="site">
+    <div id="header">
+      <h1>The Blog @ Use it or Lose it</h1>
+      <div id="menu">
+        <a href="/index.html" id="blog_link">Blog Articles</a>
+        <a href="/open_source.html" id="github_link">Open Source</a>
+        <a href="/about_me.html" id="about_me">About Me</a>
+      </div>
+    </div>
+    <div class="clearfix"/>
+  
+    <div id="content">
+      <div class="post">
+  <h1>Its not too late to solve a Y2K bug - I found one in 2010</h1>
+  <div class="date">March 14, 2010</div>
+  <div class="body">
+  <p>
+  I thought a historical opportunity had passed me by, but a full decade after the turn of the millennium in 2010 I found my first Y2K bug! If you, like me, were working in eCommerce (who remembers that buzzword?) in the late 1990s and thought you missed your chance I'm here to tell you its still not too late. As long as you work for the right company with the enough legacy technology around you can still find a Y2K bug of your own!<br>
+  <br>
+  <span style="font-weight:bold;">What was going on?</span><br>
+  <br>
+  I was writing a new Rails application on top of an old Oracle database. The database had a constraint<br>
+  <br>
+</p>
+
+<pre class="old_code">
+<br>graduationdate BETWEEN TO_DATE('01-JAN-1900','DD-MON-YYYY') AND TO_DATE('31-DEC-2100','DD-MON-YYYY')<br>
+</pre>
+
+<p>
+  <br>
+  <br>
+  To me this looked like a basic check to make sure the date was within a 300 year range as a basic sanity-check. I implemented an ActiveRecord validation in my model<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  Of course I had unit tests that all passed<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l gherkin -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  BUT once I went into production with my legacy database I started getting errors. So I took a look at one of the rows giving me an error and discovered the graduation date was <b>01-JAN-00</b>. AHA a 2-digit year. That doesn't look good and there were over 100,000 rows with this problem.<br>
+  <br>
+</p>
+
+<pre class="old_code">
+select count(*) from education where graduationdate = to_date('01-jan-1900')
+COUNT(*)               
+---------------------- 
+116232       
+</pre>
+
+<p>
+  <br>
+  <br>
+  Once I realized that the database contained data for January 1st 1900 and I discovered the Oracle BETWEEN function is inclusive I was able to solve my problem by changing my ActiveRecord validation to have a <code>&gt;= and lt;=</code>.<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  I added some specs to test my boundary conditions<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  <b>So what's the moral?</b><br>
+  <br>
+  I'm not sure but when you're have to integrate with a legacy system you should account for the absurd - in my case a job application from a candidate who graduated more than 100 years ago!<br>
+  <br>
+  And if you feel like you missed out on a once-in-a-lifetime opportunity to work on Y2K bugs don't despair. They are still out there!
+</p>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+    </div>
+
+    <div id='footer'>
+      &copy; 2011 lastpixel
+    </div>
+
+  </div>
+
+</body>
+</html>

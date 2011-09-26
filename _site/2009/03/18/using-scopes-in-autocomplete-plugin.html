@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - Using scopes in auto_complete plugin</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>Using scopes in auto_complete plugin</h1>
+  <div class="date">March 18, 2009</div>
+  <div class="body">
+  <p>
+  My colleague <a href="http://patshaughnessy.net">Pat Shaughnessy</a> has spent a lot of time recently enhancing the auto_complete plugin. I suggest you read his blog posts and check out his <a href="http://github.com/patshaughnessy/auto_complete">fork of auto_complete on github</a> to see the details.<br>
+  <br>
+  I was reading his latest change to allow <a href="http://patshaughnessy.net/2009/3/14/filtering-auto_complete-pick-lists">filtering of auto complete picklists</a> and really like what he did but thought there was one thing that didn't quite feel right - the fact that you have to mix the application logic to filter the list with the plugin logic to find the list in the block in your controller.<br>
+  <br>
+  Here's the code Pat wrote in his controller and what I'd like to avoid is having to re-implement the "LOWER(tasks.name) LIKE ?" portion that's already implemented in the filtered_auto_complete_for method of autocomplete.rb in the plugin.<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  <br>
+  I'd like to propose a slight modification so the block you write as part of your application can focus just on the filtering and leave the responsibility for the search with plugin. I'm also proposing we use scopes (which I don't think were around when the original auto_complete plugin was written) to filter and sort the list the plugin. Here is the code I'd like to write in my application.<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  We can do this with a simple modification of the plugin implementation of filtered_auto_complete_for<br>
+  <br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  Originally, it used passed the find_options hash to the block and then executed the search in one step as "@items = object.to_s.camelize.constantize.find(:all, find_options)". My change is to rely on ActiveRecord proxy objects to chain criteria together leaving the block independent of the criteria here in the plugin. The best part is you don't have to worry about performance as ActiveRecord will intelligently combine the criteria into a single SQL request. For example searching for tasks that start with 'tas' within project #7<br>
+  <br>
+</p>
+<pre class="old_code">
+<br> User Load (1.2ms)   SELECT * FROM `tasks` WHERE ((`tasks`.`project_id` = '7') AND (LOWER(name) LIKE '%tas%'))  ORDER BY name ASC LIMIT 10<br>
+</pre>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - Using Ruby for shell scripting</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>Using Ruby for shell scripting</h1>
+  <div class="date">October 09, 2008</div>
+  <div class="body">
+  <p>
+  Someone came to me the other day with a problem. He had downloaded a directory containing a large number of files with spaces in their filenames and needed to get rid of the spaces so he could load them into the tool he was using. He asked me if I knew of a mass rename tool. I didn't know of such a tool but thought it wouldn't be too hard to write something simple.<br>
+  <br>
+  First I thought of capturing the output of a find and using a text editor search-and-replace create a whole number of <span style="font-family: courier new;">mv old_file new_file_without_spaces</span> commands that could all be run. But then I would have to work with some editor's search-and-replace syntax.<br>
+  <br>
+  Then I thought of writing a shell script. I started to think about <span style="font-family: courier new;">find . -e ...</span> but realized I always get confused about the -e syntax and using sed or awk.<br>
+  <br>
+  Suddenly I realized I could do this with Ruby. About 10 minutes later I had this simple 3 line script, ran it and was done.<br>
+  <br>
+</p>
+<pre class="old_code">
+<br>  Dir[File.expand_path("#{~/file_with_spaces}/*")].uniq.sort.each do |file|<br>    system "mv '#{file}' '#{file.gsub(' ', '_')}'"<br>  end<br>
+</pre>
+<p>
+  <br>
+  <br>
+  Ruby is my new shell scripting language and I don't think I'm ever writing a bash shell script again!
+</p>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>

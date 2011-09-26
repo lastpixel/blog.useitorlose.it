@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Alex Rothenberg - I built a blog aggregator - waywework.it</title>
+   <meta name="author" content="Alex Rothenberg" />
+   <link rel="alternate" type="application/atom+xml" title="Alex Rothenberg - feed" href="http://feeds2.feedburner.com/alexrothenberg">
+   <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
+   <link rel="stylesheet" href="/stylesheets/vibrant_ink.css" type="text/css" media="screen" charset="utf-8"/>
+   <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
+   <link href="http://feeds.feedburner.com/alexrothenberg" rel="alternate" title="Alex Rothenberg" type="application/atom+xml" />
+</head>
+<body>
+
+<div id="site">
+  <div id="header">
+    <h1>AlexRothenberg</h1>
+    <div id="menu">
+      <a href="/index.html" id="blog_link">Blog Articles</a>
+      <a href="/open_source.html" id="github_link">Open Source</a>
+      <a href="/about_me.html" id="about_me">About Me</a>
+    </div>
+  </div>
+  <div class="clearfix"/>
+  
+  <div id="content">
+    <div class="post">
+  <h1>I built a blog aggregator - waywework.it</h1>
+  <div class="date">November 09, 2008</div>
+  <div class="body">
+  <p>
+  I've been spending some time recently putting together a blog aggregator site for some of the folks I work with. Its now up and running at <a href="http://waywework.it">http://waywework.it</a>. I hope this will be an interesting place to share our public community and as one of my colleagues said "this keeps my Google Reader much neater".<br>
+  <br>
+  Today I'd like to talk about the code running this site which is posted and available on github at <a href="http://github.com/alexrothenberg/waywework">http://github.com/alexrothenberg/waywework</a>.<br>
+  <br>
+  I started thinking I would use an existing aggregator site and just apply my skin but when I did a quick search on github I most of the hard work existed in atom and rss gems and plugins and I wanted to take advantage of the just released Rails 2.2 so I decided to build my own. This turned out to be not too much work. Today I'd like to talk about how I put this together.<br>
+  <br>
+  First I created my project with some scaffolding for feeds which would have_many posts<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  I soon found the <a href="http://split-s.blogspot.com/2006/04/atom-10-parser-for-ruby.html">atom gem</a> and <a href="http://www.rubyrss.com/">rss parser</a> built into ruby. Using them was a piece of cake as all I had to do was create a method to call each one in my Feed model<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  Of course I had to create the glue wrapping it all together. A rake task to be call on a schedule<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  and the logic to load the feed, parse it and update the posts.<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  The next step was to publish an atom feed of my site. Again there was a plugin <a href="http://dev.rubyonrails.org/browser/plugins/atom_feed_helper">atom_feed_helper</a>waiting to help me. I installed the plugin and created a view builder<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  This was all so easy I had hardly done anything other than glue these plugins together. Now I finished up with a few bells and whistles.<br>
+  <br>
+  I added a who's talking and archive by date section to my homepage that I called from my controller like this<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  I added security to restrict who can administer feeds<br>
+</p>
+
+Liquid error: No such file or directory - pygmentize -l ruby -O encoding=utf-8 -f html
+
+<p>
+  <br>
+  <br>
+  For the UI I am somewhat graphically challenged so got some help. For this github was very cool as I could add <a href="http://github.com/lessallan">lessallan</a> as a collaborator and he could check in his changes so they just appeared!<br>
+  <br>
+  Finally a little work with capistrano (mostly just creating a <a href="http://github.com/alexrothenberg/waywework/tree/master/Capfile">Capfile</a>) and I could deploy!<br>
+  <br>
+  Overall I spent a few days and now have a site that does exactly what I want. Where most of the code I wrote is specific to my site and the general purpose plumbing was downloaded. I'm very pleased with the availability of plugins and gems and how easy it was to collaborate using github!<br>
+  <br>
+  Now I just hope others find the site interesting to use!
+</p>
+
+  </div>
+
+  <div id="disqus_thread"></div>
+  <script type="text/javascript" src="http://alexrothenberg.disqus.com/embed.js"> </script>
+  <noscript>Please enable JavaScript to <a href="http://alexrothenberg.disqus.com/?url=ref">view the discussion thread.</a></noscript>
+</div>
+  </div>
+
+  <div id='footer'>
+    Copyright &copy; 2011 Alex Rothenberg. Some rights reserved.
+  </div>
+
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5273122-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- Google Analytics end -->
+
+
+</body>
+</html>
