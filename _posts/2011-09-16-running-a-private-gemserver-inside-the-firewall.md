@@ -1,15 +1,7 @@
 ---
 layout: post
-title: Markdown test
+title: Design inspiration - ffffound.com
 ---
 
-[test.org](http://rubygems.org) hello hello hello
-
-We need to
-
-1. Setup
-2. Configure our gems to deploy to it
-3. Yeah
-
-## Setup
+Love how <a href="http://ffffound.com/">their browsing interface</a> is primary image based. It pivots on user and image, but always pushes you to the next image.
 
